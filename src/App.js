@@ -1,6 +1,8 @@
 import { isEmpty } from "lodash";
 import { React,useState,useEffect } from "react"
-import { getCollection } from "./actions";
+import { getCollection,deleteDocument } from "./actions";
+import { Modal,ModalHeader,ModalBody,ModalFooter } from "reactstrap";
+import 'bootstrap/dist/css/bootstrap.css'
 
 
 function App() {
@@ -14,11 +16,16 @@ useEffect(() => {
   
 }, [])
 
+const [modalState, setModalState] = useState(false)
+
+const [modalStateDelete, setModalStateDelete] = useState(false)
+
 const [pets, setPets] = useState([]) //array of pets
 
 
 
 //Pet attributes
+const [petId, setPetId] = useState("")
 const [petName, setPetName] = useState("")
 const [petType, setPetType] = useState("")
 const [petBreed, setPetBreed] = useState("")
@@ -31,6 +38,23 @@ const [petOwnerEmail, setPetOwnerEmail] = useState("")
 
 const [error, setError] = useState(null)
 
+const [editMode, setEditMode] = useState(false)
+
+const closeModal =() =>{
+  setModalState(false)
+}
+
+const openModal = () =>{
+  setModalState(true)
+}
+
+const closeModalDelete =() =>{
+  setModalStateDelete(false)
+}
+
+const openModalDelete = () =>{
+  setModalStateDelete(true)
+}
 
 const validForm =() =>{
   let isValid = true
@@ -80,44 +104,77 @@ const validForm =() =>{
 
 }
 
-const addPet = (e)=>{
-  e.preventDefault()
+const modalAddPet = ()=>{
+  setPetAttributes("")
+  setEditMode(false)
+  openModal()
+  
+}
 
-  if(!validForm()){
-    return
-  }
 
-  // const newPet ={
-  //   id: 1,
-  //   petName: petName,
-  //   petType: petType,
-  //   petBreed: petBreed,
-  //   petBirthDate : petBirthDate,
-  //   petOwner: petOwner,
-  //   petOwnerPhone : petOwnerPhone,
-  //   petOwnerAddress :petOwnerAddress,
-  //   petOwnerEmail : petOwnerEmail
+const modalEditPet =(petEdit) =>{
+  setPetAttributes(petEdit)
+  setEditMode(true)
+  openModal(true)
+}
+
+const modalDeletePet =(pet) =>{
+  setPetAttributes(pet)
+  openModalDelete(true)
+
+}
+
+const addPet =(e) =>{
+  // e.preventDefault()
+}
+
+const savePet =(e) =>{
+  // e.preventDefault()
+}
+
+const deletePet = async(idPet) =>{
+
+  // //  const result = await deleteDocument("pets",idPet)
+
+  //  if(!result.statusResponse){
+  //   setError(result.error)
+  //   return
   // }
 
-  // setPets( [...pets, newPet])
-
-  setPetAttributes()
-
+  // const filteredPets =  pets.filter(pet => pet.id !== idPet) //Todas menos la que el usuario elimino
+    // setPets(filteredPets)
 }
 
-const setPetAttributes = () =>{
+
+
+
+const setPetAttributes = (Attributes) =>{
   //Set state from pet attributes
-  setPetName("")
-  setPetType("")
-  setPetBreed("")
-  setPetBirthDate("")
-  setPetOwner("")
-  setPetOwnerPhone("")
-  setPetOwnerAddress("")
-  setPetOwnerEmail("")
+
+  if(isEmpty(Attributes)){
+    setPetId("")
+    setPetName("")
+    setPetType("")
+    setPetBreed("")
+    setPetBirthDate("")
+    setPetOwner("")
+    setPetOwnerPhone("")
+    setPetOwnerAddress("")
+    setPetOwnerEmail("")
+  }else{
+    setPetId(Attributes.id)
+    setPetName(Attributes.name)
+    setPetType(Attributes.type)
+    setPetBreed(Attributes.breed)
+    setPetBirthDate(Attributes.birth_date)
+    setPetOwner(Attributes.owner_name)
+    setPetOwnerPhone(Attributes.owner_phone)
+    setPetOwnerAddress(Attributes.owner_address)
+    setPetOwnerEmail(Attributes.owner_email)
+  }
+
+  
 }
-
-
   return (
      <div className="conten-wrapper text-center mt-4">
      
@@ -133,11 +190,12 @@ const setPetAttributes = () =>{
                       <div className="col-md-12 ">
                         <div className="card-tools d-flex justify-content-between align-items-center">
                             Listado Mascotas Registradas
-                            <button type="button" className="btn btn-success btn-sm">Agregar Mascota</button>
+                            <button type="button" className="btn btn-success btn-sm" onClick={modalAddPet}>Agregar Mascota</button>
                         </div>
                       </div>
                   </div>
                   <div className="col-md-12">
+                    
                       <div className="card-body table-responsive">
                          <table className="table table-bordered table-hover">
                            <thead>
@@ -169,29 +227,24 @@ const setPetAttributes = () =>{
                                   <td>{pet.owner_address}</td>
                                   <td>{pet.owner_email}</td>
                                   <td>
-                                    <button className="btn btn-warning btn-sm mx-2">Editar</button>
-                                    <button className="btn btn-danger btn-sm">Eliminar</button>
+                                    <button 
+                                      className="btn btn-warning btn-sm mx-2" 
+                                     onClick={() => modalEditPet(pet)}>
+                                      Editar
+                                    </button>
+                                    <button 
+                                      className="btn btn-danger btn-sm"
+                                      onClick={() => modalDeletePet(pet)}
+                                    >
+                                      Eliminar
+                                    </button>
                                   </td>
 
                                 </tr>
                             
                               ))
                              }
-                             {/* <tr>
-                               
-                               <td>Benedict</td>
-                               <td>Perro</td>
-                               <td>Buldog</td>
-                               <td>2020-12-01</td>
-                               <td>Zulu</td>
-                               <td>123</td>
-                               <td>Calle Esta</td>
-                               <td>zulu@zulu.com</td>
-                               <td>
-                                 <button className="btn btn-warning btn-sm mx-2">Editar</button>
-                                 <button className="btn btn-danger btn-sm">Eliminar</button>
-                               </td>
-                             </tr> */}
+                             
                            </tbody>
 
                          </table>
@@ -203,6 +256,155 @@ const setPetAttributes = () =>{
            </div>
          </div>
        </section>
+
+       <Modal isOpen={modalState}>
+         <ModalHeader>
+           {editMode ? "Modificar Mascota." : "Agregar Mascota." }
+         </ModalHeader>
+         <ModalBody>
+           <form onSubmit={ editMode ? savePet() : addPet}>
+             <div className="form-group">
+                <div className="input-group mb3">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="basic-addon3">Nombre</span>
+                     </div>
+                     <input 
+                       type="text" 
+                       class="form-control" 
+                       aria-describedby="basic-addon3" 
+                       placeholder="Nombre de la mascota." 
+                       value={petName}>                  
+                     </input>
+                </div>
+             </div>
+
+             <div className="form-group">
+                <div className="input-group mb3">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="basic-addon3">Tipo</span>
+                     </div>
+                     <input 
+                       type="text" 
+                       class="form-control" 
+                       aria-describedby="basic-addon3" 
+                       placeholder="Tipo de la mascota." 
+                       value={petType}>                  
+                     </input>
+                </div>
+             </div>
+
+             <div className="form-group">
+                <div className="input-group mb3">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="basic-addon3">Raza</span>
+                     </div>
+                     <input 
+                       type="text" 
+                       class="form-control" 
+                       aria-describedby="basic-addon3" 
+                       placeholder="Raza de la mascota." 
+                       value={petBreed}>                  
+                     </input>
+                </div>
+             </div>
+
+             <div className="form-group">
+                <div className="input-group mb3">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="basic-addon3">Fecha Nacimiento</span>
+                     </div>
+                     <input 
+                       type="text" 
+                       class="form-control" 
+                       aria-describedby="basic-addon3" 
+                       placeholder="Fecha de nacimiento de la mascota." 
+                       value={petBirthDate}>                  
+                     </input>
+                </div>
+             </div>
+
+             <div className="form-group">
+                <div className="input-group mb3">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="basic-addon3">Propietario</span>
+                     </div>
+                     <input 
+                       type="text" 
+                       class="form-control" 
+                       aria-describedby="basic-addon3" 
+                       placeholder="Propietario de la mascota." 
+                       value={petOwner}>                  
+                     </input>
+                </div>
+             </div>
+
+             <div className="form-group">
+                <div className="input-group mb3">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="basic-addon3">Telefono</span>
+                     </div>
+                     <input 
+                       type="text" 
+                       class="form-control" 
+                       aria-describedby="basic-addon3" 
+                       placeholder="Telefono del propietario." 
+                       value={petOwnerPhone}>                  
+                     </input>
+                </div>
+             </div>
+             <div className="form-group">
+                <div className="input-group mb3">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="basic-addon3">Direccion</span>
+                     </div>
+                     <input 
+                       type="text" 
+                       class="form-control" 
+                       aria-describedby="basic-addon3" 
+                       placeholder="Direccion del propietario." 
+                       value={petOwnerAddress}>                  
+                     </input>
+                </div>
+             </div>
+
+             <div className="form-group">
+                <div className="input-group mb3">
+                     <div class="input-group-prepend">
+                         <span class="input-group-text" id="basic-addon3">Email</span>
+                     </div>
+                     <input 
+                       type="text" 
+                       class="form-control" 
+                       aria-describedby="basic-addon3" 
+                       placeholder="Email del propietario." 
+                       value={petOwnerEmail}>                  
+                     </input>
+                </div>
+             </div>             
+           </form>
+        
+
+         </ModalBody>
+         <ModalFooter>
+           <button className="btn btn-success">Guardar</button>
+           <button className="btn btn-danger" onClick={closeModal}>Cerrar</button>
+         </ModalFooter>
+       </Modal>
+
+
+       <Modal isOpen={modalStateDelete}>
+         <ModalHeader>
+                <p>Confirmar eliminación.   </p>  
+         </ModalHeader>
+         <ModalBody>
+           <p>¿Esta seguro de eliminar la mascota llamada <strong>{petName} </strong>?</p>
+         </ModalBody>
+         
+         <ModalFooter>
+         <button className="btn btn-success" onClick={deletePet(petId)}>Confirmar</button>
+         <button className="btn btn-danger" onClick={closeModalDelete}>Cerrar</button>
+         </ModalFooter>
+       </Modal>
 
 
 
