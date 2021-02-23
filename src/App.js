@@ -49,6 +49,7 @@ const openModal = () =>{
 }
 
 const closeModalDelete =() =>{
+  
   setModalStateDelete(false)
 }
 
@@ -132,7 +133,8 @@ const savePet =(e) =>{
   // e.preventDefault()
 }
 
-const deletePet = async(idPet) =>{
+const deletePet = async(e) =>{
+  e.preventDefault()
 
   // //  const result = await deleteDocument("pets",idPet)
 
@@ -140,6 +142,9 @@ const deletePet = async(idPet) =>{
   //   setError(result.error)
   //   return
   // }
+
+  console.log(petId)
+  closeModalDelete()
 
   // const filteredPets =  pets.filter(pet => pet.id !== idPet) //Todas menos la que el usuario elimino
     // setPets(filteredPets)
@@ -265,119 +270,119 @@ const setPetAttributes = (Attributes) =>{
            <form onSubmit={ editMode ? savePet() : addPet}>
              <div className="form-group">
                 <div className="input-group mb3">
-                     <div class="input-group-prepend">
-                         <span class="input-group-text" id="basic-addon3">Nombre</span>
+                     <div className="input-group-prepend">
+                         <span className="input-group-text" id="basic-addon3">Nombre</span>
                      </div>
                      <input 
                        type="text" 
-                       class="form-control" 
+                       className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Nombre de la mascota." 
-                       value={petName}>                  
+                       defaultValue={petName}>                  
                      </input>
                 </div>
              </div>
 
              <div className="form-group">
                 <div className="input-group mb3">
-                     <div class="input-group-prepend">
-                         <span class="input-group-text" id="basic-addon3">Tipo</span>
+                     <div className="input-group-prepend">
+                         <span className="input-group-text" id="basic-addon3">Tipo</span>
                      </div>
                      <input 
                        type="text" 
-                       class="form-control" 
+                       className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Tipo de la mascota." 
-                       value={petType}>                  
+                       defaultValue={petType}>                  
                      </input>
                 </div>
              </div>
 
              <div className="form-group">
                 <div className="input-group mb3">
-                     <div class="input-group-prepend">
-                         <span class="input-group-text" id="basic-addon3">Raza</span>
+                     <div className="input-group-prepend">
+                         <span className="input-group-text" id="basic-addon3">Raza</span>
                      </div>
                      <input 
                        type="text" 
-                       class="form-control" 
+                       className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Raza de la mascota." 
-                       value={petBreed}>                  
+                       defaultValue={petBreed}>                  
                      </input>
                 </div>
              </div>
 
              <div className="form-group">
                 <div className="input-group mb3">
-                     <div class="input-group-prepend">
-                         <span class="input-group-text" id="basic-addon3">Fecha Nacimiento</span>
+                     <div className="input-group-prepend">
+                         <span className="input-group-text" id="basic-addon3">Fecha Nacimiento</span>
                      </div>
                      <input 
                        type="text" 
-                       class="form-control" 
+                       className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Fecha de nacimiento de la mascota." 
-                       value={petBirthDate}>                  
+                       defaultValue={petBirthDate}>                  
                      </input>
                 </div>
              </div>
 
              <div className="form-group">
                 <div className="input-group mb3">
-                     <div class="input-group-prepend">
-                         <span class="input-group-text" id="basic-addon3">Propietario</span>
+                     <div className="input-group-prepend">
+                         <span className="input-group-text" id="basic-addon3">Propietario</span>
                      </div>
                      <input 
                        type="text" 
-                       class="form-control" 
+                       className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Propietario de la mascota." 
-                       value={petOwner}>                  
+                       defaultValue={petOwner}>                  
                      </input>
                 </div>
              </div>
 
              <div className="form-group">
                 <div className="input-group mb3">
-                     <div class="input-group-prepend">
-                         <span class="input-group-text" id="basic-addon3">Telefono</span>
+                     <div className="input-group-prepend">
+                         <span className="input-group-text" id="basic-addon3">Telefono</span>
                      </div>
                      <input 
                        type="text" 
-                       class="form-control" 
+                       className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Telefono del propietario." 
-                       value={petOwnerPhone}>                  
+                       defaultValue={petOwnerPhone}>                  
                      </input>
                 </div>
              </div>
              <div className="form-group">
                 <div className="input-group mb3">
-                     <div class="input-group-prepend">
-                         <span class="input-group-text" id="basic-addon3">Direccion</span>
+                     <div className="input-group-prepend">
+                         <span className="input-group-text" id="basic-addon3">Direccion</span>
                      </div>
                      <input 
                        type="text" 
-                       class="form-control" 
+                       className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Direccion del propietario." 
-                       value={petOwnerAddress}>                  
+                       defaultValue={petOwnerAddress}>                  
                      </input>
                 </div>
              </div>
 
              <div className="form-group">
                 <div className="input-group mb3">
-                     <div class="input-group-prepend">
-                         <span class="input-group-text" id="basic-addon3">Email</span>
+                     <div className="input-group-prepend">
+                         <span className="input-group-text" id="basic-addon3">Email</span>
                      </div>
                      <input 
                        type="text" 
-                       class="form-control" 
+                       className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Email del propietario." 
-                       value={petOwnerEmail}>                  
+                       defaultValue={petOwnerEmail}>                  
                      </input>
                 </div>
              </div>             
@@ -398,11 +403,22 @@ const setPetAttributes = (Attributes) =>{
          </ModalHeader>
          <ModalBody>
            <p>¿Esta seguro de eliminar la mascota llamada <strong>{petName} </strong>?</p>
+           <div className="form-group">
+
+           </div>
          </ModalBody>
          
          <ModalFooter>
-         <button className="btn btn-success" onClick={deletePet(petId)}>Confirmar</button>
-         <button className="btn btn-danger" onClick={closeModalDelete}>Cerrar</button>
+           <div className="form-group">
+             <form onSubmit={deletePet}>
+                <button className="btn btn-success mx-2" type="submit">Confirmar</button>
+                <button className="btn btn-danger" type="button" onClick={closeModalDelete}>Cerrar</button>
+             </form>
+             
+           
+
+           </div>
+         
          </ModalFooter>
        </Modal>
 
