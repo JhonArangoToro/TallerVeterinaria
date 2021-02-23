@@ -1,6 +1,6 @@
 import { isEmpty } from "lodash";
 import { React,useState,useEffect } from "react"
-import { getCollection,deleteDocument } from "./actions";
+import { getCollection,deleteDocument,addDocument,updateDocument } from "./actions";
 import { Modal,ModalHeader,ModalBody,ModalFooter } from "reactstrap";
 import 'bootstrap/dist/css/bootstrap.css'
 
@@ -45,11 +45,11 @@ const closeModal =() =>{
 }
 
 const openModal = () =>{
+  setError(null)
   setModalState(true)
 }
 
 const closeModalDelete =() =>{
-  
   setModalStateDelete(false)
 }
 
@@ -61,47 +61,56 @@ const validForm =() =>{
   let isValid = true
   setError(null)
 
+
   if(isEmpty(petName)){
     setError("Ingresa nombre de la mascota")
     isValid=false
+    return
   }
 
   if(isEmpty(petType)){
     setError("Ingrese el tipo de la mascota")
     isValid=false
+    return
   }
 
   if(isEmpty(petBreed)){
     setError("Ingrese la raza de la mascota")
     isValid=false
+    return
   }
 
   if(isEmpty(petBirthDate)){
     setError("Ingrese fecha de nacimiento de la de la mascota")
     isValid=false
+    return
   }
 
   if(isEmpty(petOwner)){
     setError("Ingrese dueño de la de la mascota")
     isValid=false
+    return
   }
 
   if(isEmpty(petOwnerPhone)){
     setError("Ingrese telefono del dueño")
     isValid=false
+    return
   }
 
   if(isEmpty(petOwnerAddress)){
     setError("Ingrese direccion del dueño")
     isValid=false
+    return
   }
 
   if(isEmpty(petOwnerEmail)){
     setError("Ingrese email del dueño")
     isValid=false
+    return
   }
 
-  return  isValid
+  return isValid
 
 }
 
@@ -125,29 +134,90 @@ const modalDeletePet =(pet) =>{
 
 }
 
-const addPet =(e) =>{
-  // e.preventDefault()
+const addPet = async(e) =>{
+   e.preventDefault()
+
+  if(!validForm()){
+    return
+  }
+  const newPet ={
+    name: petName,
+    type: petType,
+    breed: petBreed,
+    birth_date: petBirthDate,
+    owner_name : petOwner,
+    owner_phone :petOwnerPhone,
+    owner_address : petOwnerAddress,
+    owner_email: petOwnerEmail
+  }
+
+  const result = await addDocument("pets",newPet)
+
+  if(!result.statusResponse){
+    setError(result.error)
+    return
+  }
+
+  const newPetAdded = {id: result.data.id, ...newPet}
+
+  setPets([...pets, newPetAdded])
+  setPetAttributes("")
+  closeModal()
 }
 
-const savePet =(e) =>{
-  // e.preventDefault()
+const savePet = async(e) =>{
+   e.preventDefault()
+
+   if(!validForm()){
+    return
+  }
+
+  const editPet ={
+    name: petName,
+    type: petType,
+    breed: petBreed,
+    birth_date: petBirthDate,
+    owner_name : petOwner,
+    owner_phone :petOwnerPhone,
+    owner_address : petOwnerAddress,
+    owner_email: petOwnerEmail
+  }
+
+  const result = await updateDocument("pets",petId, editPet)
+
+  if(!result.statusResponse){
+    setError(result.error)
+    return
+  }
+
+  const newPetsEdited = pets.map(pet => pet.id === petId ? {id: petId,...editPet} : pet )
+
+  setPets(newPetsEdited)
+  setEditMode(false)
+  setPetAttributes("")
+  closeModal()
+
+
+
+
 }
 
 const deletePet = async(e) =>{
   e.preventDefault()
 
-  // //  const result = await deleteDocument("pets",idPet)
+  const result = await deleteDocument("pets",petId)
 
-  //  if(!result.statusResponse){
-  //   setError(result.error)
-  //   return
-  // }
+   if(!result.statusResponse){
+    setError(result.error)
+    return
+  }
 
-  console.log(petId)
+   const filteredPets =  pets.filter(pet => pet.id !== petId) //Todas menos la que el usuario elimino
+   setPets(filteredPets)
+
   closeModalDelete()
 
-  // const filteredPets =  pets.filter(pet => pet.id !== idPet) //Todas menos la que el usuario elimino
-    // setPets(filteredPets)
+  
 }
 
 
@@ -191,6 +261,7 @@ const setPetAttributes = (Attributes) =>{
                  <div className="card-header">
                     <h5 className="card-title">Veterinaria / <strong style={{color:"blue"}}>Registro Mascotas</strong></h5>
                     <p className="card-text">Trabajo Practico</p>
+                    
 
                       <div className="col-md-12 ">
                         <div className="card-tools d-flex justify-content-between align-items-center">
@@ -267,7 +338,7 @@ const setPetAttributes = (Attributes) =>{
            {editMode ? "Modificar Mascota." : "Agregar Mascota." }
          </ModalHeader>
          <ModalBody>
-           <form onSubmit={ editMode ? savePet() : addPet}>
+           
              <div className="form-group">
                 <div className="input-group mb3">
                      <div className="input-group-prepend">
@@ -278,6 +349,7 @@ const setPetAttributes = (Attributes) =>{
                        className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Nombre de la mascota." 
+                       onChange={(text) => setPetName(text.target.value)}
                        defaultValue={petName}>                  
                      </input>
                 </div>
@@ -293,6 +365,7 @@ const setPetAttributes = (Attributes) =>{
                        className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Tipo de la mascota." 
+                       onChange={(text) => setPetType(text.target.value)}
                        defaultValue={petType}>                  
                      </input>
                 </div>
@@ -308,6 +381,7 @@ const setPetAttributes = (Attributes) =>{
                        className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Raza de la mascota." 
+                       onChange={(text) => setPetBreed(text.target.value)}
                        defaultValue={petBreed}>                  
                      </input>
                 </div>
@@ -323,6 +397,7 @@ const setPetAttributes = (Attributes) =>{
                        className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Fecha de nacimiento de la mascota." 
+                       onChange={(text) => setPetBirthDate(text.target.value)}
                        defaultValue={petBirthDate}>                  
                      </input>
                 </div>
@@ -338,6 +413,7 @@ const setPetAttributes = (Attributes) =>{
                        className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Propietario de la mascota." 
+                       onChange={(text) => setPetOwner(text.target.value)}
                        defaultValue={petOwner}>                  
                      </input>
                 </div>
@@ -352,7 +428,8 @@ const setPetAttributes = (Attributes) =>{
                        type="text" 
                        className="form-control" 
                        aria-describedby="basic-addon3" 
-                       placeholder="Telefono del propietario." 
+                       placeholder="Telefono del propietario."
+                       onChange={(text) => setPetOwnerPhone(text.target.value)} 
                        defaultValue={petOwnerPhone}>                  
                      </input>
                 </div>
@@ -367,6 +444,7 @@ const setPetAttributes = (Attributes) =>{
                        className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Direccion del propietario." 
+                       onChange={(text) => setPetOwnerAddress(text.target.value)}
                        defaultValue={petOwnerAddress}>                  
                      </input>
                 </div>
@@ -382,19 +460,24 @@ const setPetAttributes = (Attributes) =>{
                        className="form-control" 
                        aria-describedby="basic-addon3" 
                        placeholder="Email del propietario." 
+                       onChange={(text) => setPetOwnerEmail(text.target.value)}
                        defaultValue={petOwnerEmail}>                  
                      </input>
                 </div>
-             </div>             
-           </form>
+             </div>  
+             { error && <span className="text-danger">{error}</span> }           
+           
         
 
          </ModalBody>
          <ModalFooter>
-           <button className="btn btn-success">Guardar</button>
-           <button className="btn btn-danger" onClick={closeModal}>Cerrar</button>
+         <form onSubmit={ editMode ? savePet : addPet}>
+           <button className="btn btn-success mx-2" type="submit">Guardar</button>
+           <button className="btn btn-danger" type ="button" onClick={closeModal}>Cerrar</button>
+          </form>
          </ModalFooter>
        </Modal>
+
 
 
        <Modal isOpen={modalStateDelete}>
