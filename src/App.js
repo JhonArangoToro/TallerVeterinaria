@@ -8,24 +8,28 @@ import 'bootstrap/dist/css/bootstrap.css'
 
 function App() {
 
-
+/*I call the database when loading the page*/
 useEffect(() => {
   (async ()=> {
+    /*I get the documents from the collection called pets*/ 
     const result = await getCollection("pets")
+
+    /*I fill the pet array with the documents obtained */
     setPets(result.data)
   })()
   
 }, [])
 
+/*States to control opening and closing of modals */
 const [modalState, setModalState] = useState(false)
-
 const [modalStateDelete, setModalStateDelete] = useState(false)
 
-const [pets, setPets] = useState([]) //array of pets
+/*Array of pets*/
+const [pets, setPets] = useState([]) 
 
 
 
-//Pet attributes
+/*Pet attributes*/
 const [petId, setPetId] = useState("")
 const [petName, setPetName] = useState("")
 const [petType, setPetType] = useState("")
@@ -36,28 +40,30 @@ const [petOwnerPhone, setPetOwnerPhone] = useState("")
 const [petOwnerAddress, setPetOwnerAddress] = useState("")
 const [petOwnerEmail, setPetOwnerEmail] = useState("")
 
-
+/*Status to be able to control and determine in case of any error */
 const [error, setError] = useState(null)
-
 const [editMode, setEditMode] = useState(false)
 
-const closeModal =() =>{
-  setModalState(false)
-}
-
+/*Functions to close and open the modalities of Edit, Create, Delete */
 const openModal = () =>{
   setError(null)
   setModalState(true)
 }
 
-const closeModalDelete =() =>{
-  setModalStateDelete(false)
+const closeModal =() =>{
+  setModalState(false)
 }
 
 const openModalDelete = () =>{
   setModalStateDelete(true)
 }
 
+const closeModalDelete =() =>{
+  setModalStateDelete(false)
+}
+
+
+/*Function to validate that the data entered is correct*/
 const validForm =() =>{
   let isValid = true
   setError(null)
@@ -115,13 +121,12 @@ const validForm =() =>{
 
 }
 
+/*Functions to set the fields in the modal to add, edit or delete pet*/
 const modalAddPet = ()=>{
   setPetAttributes("")
   setEditMode(false)
   openModal()
-  
 }
-
 
 const modalEditPet =(petEdit) =>{
   setPetAttributes(petEdit)
@@ -135,12 +140,16 @@ const modalDeletePet =(pet) =>{
 
 }
 
+/*Function that is executed in the confirm of the Add Pet modal */
 const addPet = async(e) =>{
    e.preventDefault()
 
+   /*It is validated if the fields are full */
   if(!validForm()){
     return
   }
+
+  /*Object with information that the user entered*/
   const newPet ={
     name: petName,
     type: petType,
@@ -152,16 +161,22 @@ const addPet = async(e) =>{
     owner_email: petOwnerEmail
   }
 
+  /*I make a request to Firebase to insert a new document through the addDocument and I get the response */
   const result = await addDocument("pets",newPet)
 
+  /*If the request fails, I get the error message and paint it through the error variable */
   if(!result.statusResponse){
     setError(result.error)
     return
   }
 
+  /*Object that allows to bind the new pet with the id returned by firebasee*/
   const newPetAdded = {id: result.data.id, ...newPet}
 
+  /*add the new pet to the array where the other pets are */
   setPets([...pets, newPetAdded])
+
+  
   setPetAttributes("")
   closeModal()
 }
