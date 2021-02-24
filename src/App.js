@@ -5,6 +5,7 @@ import { Modal,ModalHeader,ModalBody,ModalFooter } from "reactstrap";
 import 'bootstrap/dist/css/bootstrap.css'
 
 
+
 function App() {
 
 
@@ -258,17 +259,19 @@ const setPetAttributes = (Attributes) =>{
            <div className="row">
              <div className="col-12">
                <div className="card card-primary card-outline">
-                 <div className="card-header">
+                 <div className="card-header" >
                     <h5 className="card-title">Veterinaria / <strong style={{color:"blue"}}>Registro Mascotas</strong></h5>
-                    <p className="card-text">Trabajo Practico</p>
+                    <p className="card-text">Trabajo Practico </p>
                     
 
                       <div className="col-md-12 ">
                         <div className="card-tools d-flex justify-content-between align-items-center">
                             Listado Mascotas Registradas
-                            <button type="button" className="btn btn-success btn-sm" onClick={modalAddPet}>Agregar Mascota</button>
+                            <button type="button" className="btn btn-success btn-sm" onClick={modalAddPet}><i className="fas fa-plus"></i> Agregar Mascota</button>
                         </div>
+                        
                       </div>
+  
                   </div>
                   <div className="col-md-12">
                     
@@ -306,13 +309,14 @@ const setPetAttributes = (Attributes) =>{
                                     <button 
                                       className="btn btn-warning btn-sm mx-2" 
                                      onClick={() => modalEditPet(pet)}>
+                                       <i className="fas fa-edit"></i>
                                       Editar
                                     </button>
                                     <button 
                                       className="btn btn-danger btn-sm"
                                       onClick={() => modalDeletePet(pet)}
                                     >
-                                      Eliminar
+                                      <i className="far fa-trash-alt"></i> Eliminar
                                     </button>
                                   </td>
 
@@ -335,7 +339,7 @@ const setPetAttributes = (Attributes) =>{
 
        <Modal isOpen={modalState}>
          <ModalHeader>
-           {editMode ? "Modificar Mascota." : "Agregar Mascota." }
+         <i className="fas fa-paw"></i> {editMode ?  "Modificar Mascota." : "Agregar Mascota." }
          </ModalHeader>
          <ModalBody>
            
@@ -482,7 +486,7 @@ const setPetAttributes = (Attributes) =>{
 
        <Modal isOpen={modalStateDelete}>
          <ModalHeader>
-                <p>Confirmar eliminación.   </p>  
+         <p> <i className="fas fa-cat"></i> Confirmar Eliminación!   </p>  
          </ModalHeader>
          <ModalBody>
            <p>¿Esta seguro de eliminar la mascota llamada <strong>{petName} </strong>?</p>
@@ -494,7 +498,7 @@ const setPetAttributes = (Attributes) =>{
          <ModalFooter>
            <div className="form-group">
              <form onSubmit={deletePet}>
-                <button className="btn btn-success mx-2" type="submit">Confirmar</button>
+                <button className="btn btn-success mx-2" type="submit">  Confirmar</button>
                 <button className="btn btn-danger" type="button" onClick={closeModalDelete}>Cerrar</button>
              </form>
              
